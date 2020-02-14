@@ -15,6 +15,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -put -f data.csv;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -23,7 +24,9 @@ u = LOAD 'data.csv' USING PigStorage(',')
         birthday:CHARARRAY, 
         color:CHARARRAY, 
         quantity:INT);
---
--- >>> Escriba su respuesta a partir de este punto <<<
---
-
+data_00 = FOREACH u GENERATE firstname,color;
+data_01 = FILTER data_00 BY color in ('blue','black');
+STORE data_01 INTO 'output' USING PigStorage (',');
+fs -get output/ .
+fs -rm -f data.tsv
+fs -rm -r output

@@ -22,6 +22,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -put -f data.csv
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -30,6 +31,10 @@ u = LOAD 'data.csv' USING PigStorage(',')
         birthday:CHARARRAY, 
         color:CHARARRAY, 
         quantity:INT);
---
--- >>> Escriba su respuesta a partir de este punto <<<
---
+data_01 = FOREACH u GENERATE surname, SUBSTRING(surname,0,1) AS inicio;
+data_02 = FILTER data_01 BY ((inicio > 'C') and ((inicio < 'L')));
+data_03 = FOREACH data_02 GENERATE surname;
+STORE data_03 INTO 'output';
+fs -get output/ .
+fs -rm -f data.tsv
+fs -rm -r output

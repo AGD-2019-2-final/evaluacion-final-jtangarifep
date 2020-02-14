@@ -7,6 +7,13 @@
 --
 -- Escriba el resultado a la carpeta `output` de directorio de trabajo.
 --
+
+!hdfs dfs -rm -r -f /output/*;
+!hdfs dfs -rm -r -f /output;
+!hdfs dfs -rm -r -f tbl0.csv
+!hdfs dfs -rm -r -f tbl1.csv
+!hdfs dfs -mkdir /output;
+
 DROP TABLE IF EXISTS tbl0;
 CREATE TABLE tbl0 (
     c1 INT,
@@ -40,4 +47,18 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+INSERT OVERWRITE DIRECTORY '/output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+SELECT concat_ws(':',T2.c5)
+FROM
+(
+SELECT T1.c1, collect_list(UPPER(T1.c5l)) AS c5
+FROM
+(
+SELECT c1, c5l  FROM tbl0 
+LATERAL VIEW explode(c5) myTable1 AS c5l
+) T1
+GROUP BY T1.c1
+) T2;
 
+!hdfs dfs -get /output;

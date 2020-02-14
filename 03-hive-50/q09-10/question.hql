@@ -7,6 +7,13 @@
 --
 -- Escriba el resultado a la carpeta `output` de directorio de trabajo.
 --
+
+!hdfs dfs -rm -r -f /output/*;
+!hdfs dfs -rm -r -f /output;
+!hdfs dfs -rm -r -f tbl0.csv
+!hdfs dfs -rm -r -f tbl1.csv
+!hdfs dfs -mkdir /output;
+
 DROP TABLE IF EXISTS tbl0;
 CREATE TABLE tbl0 (
     c1 INT,
@@ -39,3 +46,8 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+INSERT OVERWRITE DIRECTORY '/output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+select tbl0.c1,tbl0.c2,tbl1.c4[tbl0.c2]  from tbl0 join tbl1 on tbl0.c1 = tbl1.c1;
+!hdfs dfs -get /output;

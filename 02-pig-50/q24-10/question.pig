@@ -14,6 +14,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -put -f data.csv
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -25,4 +26,10 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+data_00 = FOREACH u GENERATE FLATTEN(STRSPLIT(birthday,'-'));
+data_01 = FOREACH data_00 GENERATE $1;
+STORE data_01 INTO 'output';
+fs -get output/ .
+fs -rm -f data.csv
+fs -rm -r output
 

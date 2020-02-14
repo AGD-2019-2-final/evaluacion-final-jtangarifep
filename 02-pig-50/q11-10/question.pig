@@ -27,6 +27,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -put -f data.csv
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -35,6 +36,9 @@ u = LOAD 'data.csv' USING PigStorage(',')
         birthday:CHARARRAY, 
         color:CHARARRAY, 
         quantity:INT);
---
--- >>> Escriba su respuesta a partir de este punto <<<
---
+data_01 = FOREACH u GENERATE surname, UPPER(surname), LOWER(surname);
+data_02 = ORDER data_01 BY $0 ASC;
+STORE data_02 INTO 'output' USING PigStorage(',');
+fs -get output/ .
+fs -rm -f data.tsv
+fs -rm -r output

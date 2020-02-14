@@ -24,6 +24,9 @@ u = LOAD 'data.csv' USING PigStorage(',')
         birthday:CHARARRAY, 
         color:CHARARRAY, 
         quantity:INT);
---
--- >>> Escriba su respuesta a partir de este punto <<<
---
+data_00 = FOREACH u GENERATE firstname,color;
+data_01 = FILTER data_00 BY (color == 'blue') and (firstname matches 'Z.*');
+STORE data_01 INTO 'output';
+fs -get output/ .
+fs -rm -f data.tsv
+fs -rm -r output

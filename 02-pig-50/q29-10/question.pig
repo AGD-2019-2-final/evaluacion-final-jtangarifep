@@ -40,3 +40,8 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+data_00 = FOREACH u GENERATE ToString(ToDate(birthday,'yyyy-MM-dd'),'yyyy-MM-dd'), ToString(ToDate(birthday,'yyyy-MM-dd'),'MMM'), ToString(ToDate(birthday,'yyyy-MM-dd'),'MM'), ToString(ToDate(birthday,'yyyy-MM-dd'),'M');
+STORE data_00 INTO 'output' USING PigStorage (',');
+fs -get output/ .
+fs -rm -f data.csv
+fs -rm -r output

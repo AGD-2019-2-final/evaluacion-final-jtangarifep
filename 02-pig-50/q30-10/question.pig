@@ -29,6 +29,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -put -f data.csv;
 --
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -41,3 +42,8 @@ u = LOAD 'data.csv' USING PigStorage(',')
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+data_00 = FOREACH u GENERATE ToString(ToDate(birthday,'yyyy-MM-dd'),'yyyy-MM-dd'), ToString(ToDate(birthday,'yyyy-MM-dd'),'dd'), ToString(ToDate(birthday,'yyyy-MM-dd'),'d'), ToString(ToDate(birthday,'yyyy-MM-dd'),'EEE'),ToString(ToDate(birthday,'yyyy-MM-dd'),'EEEE');
+STORE data_00 INTO 'output' USING PigStorage (',');
+fs -get output/ .
+fs -rm -f data.csv
+fs -rm -r output

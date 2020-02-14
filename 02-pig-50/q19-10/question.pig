@@ -17,6 +17,7 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
+fs -put -f data.csv;
 -- 
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
@@ -25,6 +26,11 @@ u = LOAD 'data.csv' USING PigStorage(',')
         birthday:CHARARRAY, 
         color:CHARARRAY, 
         quantity:INT);
---        
--- >>> Escriba su respuesta a partir de este punto <<<
---
+data_00 = FOREACH u GENERATE firstname,color;
+data_01 = FOREACH data_00 GENERATE firstname,(REGEX_EXTRACT_ALL(color,'(^[b].*)')) AS col_rex;
+data_02 = FILTER data_01 BY (col_rex IS NOT NULL);
+data_03 = FOREACH data_02 GENERATE firstname, FLATTEN(col_rex) AS col_rex;
+STORE data_03 INTO 'output' USING PigStorage (',');
+fs -get output/ .;
+fs -rm -f data.csv;
+fs -rm -r output;

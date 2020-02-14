@@ -7,6 +7,13 @@
 --
 -- Escriba el resultado a la carpeta `output` de directorio de trabajo.
 --
+
+!hdfs dfs -rm -r -f /output/*;
+!hdfs dfs -rm -r -f /output;
+!hdfs dfs -rm -r -f tbl0.csv
+!hdfs dfs -rm -r -f tbl1.csv
+!hdfs dfs -mkdir /output;
+
 DROP TABLE IF EXISTS t0;
 CREATE TABLE t0 (
     c1 STRING,
@@ -22,5 +29,9 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+INSERT OVERWRITE DIRECTORY '/output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+select c1, size(c2), size(c3)  from t0;
 
+!hdfs dfs -get /output;
 

@@ -1,5 +1,4 @@
-
-#! /usr/local/bin/python3
+#!/usr/bin/env python3
 r"""Test cases
 >>> run_answer() # doctest: +NORMALIZE_WHITESPACE
 A   1990-07-22   0	
